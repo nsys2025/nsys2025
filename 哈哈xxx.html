@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>龙腾时钟</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #8B0000;
+            overflow: hidden;
+            font-family: '楷体', cursive;
+        }
+
+        /* 龙纹背景 */
+        .dragon-bg {
+            position: fixed;
+            width: 200%;
+            height: 200%;
+            background: 
+                linear-gradient(45deg, #ff000033 25%, transparent 25%),
+                linear-gradient(-45deg, #ffd70033 25%, transparent 25%),
+                repeating-linear-gradient(45deg, #8B0000 0 2px, #670000 2px 4px);
+            background-size: 100px 100px;
+            animation: dragonMove 40s linear infinite;
+            z-index: 0;
+        }
+
+        /* 时钟容器 */
+        .clock-container {
+            position: relative;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 2px solid #ffd700;
+            z-index: 1;
+        }
+
+        .datetime {
+            color: #ffd700;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .date {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .time {
+            font-size: 5rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .time span {
+            background: linear-gradient(45deg, #8B0000, #ff0000);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            min-width: 120px;
+            border: 1px solid #ffd700;
+            transition: all 0.3s ease;
+        }
+
+        .weekday {
+            font-size: 2rem;
+            margin-top: 1rem;
+            color: #fff;
+        }
+
+        /* 龙形装饰 */
+        .dragon {
+            position: absolute;
+            font-size: 150px;
+            opacity: 0.1;
+            animation: dragonFloat 20s linear infinite;
+        }
+
+        /* 动画 */
+        @keyframes dragonMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-50%, -50%); }
+        }
+
+        @keyframes dragonFloat {
+            0% { transform: translateX(-100%) rotate(-15deg); }
+            100% { transform: translateX(200%) rotate(15deg); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .clock-container { padding: 2rem; }
+            .date { font-size: 1.8rem; }
+            .time { font-size: 3rem; }
+            .weekday { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 动态龙纹背景 -->
+    <div class="dragon-bg"></div>
+    
+    <!-- 游龙装饰 -->
+    <div class="dragon" style="top:20%;left:-10%">🐉</div>
+    <div class="dragon" style="top:50%;right:-20%">🐉</div>
+    <div class="dragon" style="top:80%;left:-15%">🐉</div>
+
+    <!-- 时钟主体 -->
+    <div class="clock-container">
+        <div class="datetime">
+            <div class="date" id="date"></div>
+            <div class="time" id="time"></div>
+            <div class="weekday" id="weekday"></div>
+        </div>
+    </div>
+
+    <script>
+        // 时间更新函数
+        function updateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+            
+            document.getElementById('date').innerHTML = `
+                ${year}年 ${month}月 ${day}日
+            `;
+            
+            document.getElementById('time').innerHTML = `
+                <span>${hours}</span>:<span>${minutes}</span>:<span>${seconds}</span>
+            `;
+            
+            document.getElementById('weekday').textContent = `星期${weekdays[now.getDay()]}`;
+        }
+
+        // 初始化
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // 添加金粉特效
+        setInterval(() => {
+            const spark = document.createElement('div');
+            spark.style.cssText = `
+                position: fixed;
+                width: 3px;
+                height: 3px;
+                background: radial-gradient(gold, transparent);
+                pointer-events: none;
+                border-radius: 50%;
+                animation: sparkle 1s ease-out;
+            `;
+            spark.style.left = Math.random() * 100 + 'vw';
+            spark.style.top = Math.random() * 100 + 'vh';
+            document.body.appendChild(spark);
+            setTimeout(() => spark.remove(), 1000);
+        }, 50);
+
+        // 添加动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkle {
+                0% { transform: scale(0); opacity: 1; }
+                100% { transform: scale(3); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
